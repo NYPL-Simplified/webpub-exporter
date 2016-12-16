@@ -47,7 +47,7 @@ func main() {
 
         _ = os.Mkdir(outputDir, os.ModePerm)
 
-	publication := parser.Parse(*filenameFlag, *urlFlag)
+	publication, _ := parser.Parse(*filenameFlag, *urlFlag)
         manifestJSON, _ := json.Marshal(publication)
         ioutil.WriteFile(outputDir + "/manifest.json", manifestJSON, 0644)
 
@@ -62,10 +62,9 @@ func main() {
                 var parts = strings.Split(outputFile, "/")
                 var outputFileDir = strings.Join(parts[:len(parts)-1], "/")
                 _ = os.Mkdir(outputFileDir, os.ModePerm)
-                fileReader, _ := fetcher.Fetch(publication, link.Href)
-                var fileBytes []byte
-                fileReader.Read(fileBytes)
-                ioutil.WriteFile(outputFile, fileBytes, 0644)
+                fileReader, _, _ := fetcher.Fetch(publication, link.Href)
+                buff, _ := ioutil.ReadAll(fileReader)
+                ioutil.WriteFile(outputFile, buff, 0644)
         }
 
         cacheManifestString += "\nNETWORK:\n*\n"
@@ -77,7 +76,7 @@ func main() {
         webManifest.Name = publication.Metadata.Title
         webManifest.ShortName = publication.Metadata.Title
 
-	cover := publication.GetCover()
+	cover, _ := publication.GetCover()
         webManifest.Icons = Icon{
                 Size: "144x144",
                 Src: cover.Href,
