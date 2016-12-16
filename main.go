@@ -32,7 +32,7 @@ type AppInstall struct {
 	Name      string `json:"name"`
 	StartURL  string `json:"start_url"`
 	Display   string `json:"display"`
-	Icons     Icon   `json:"icons"`
+	Icons     []Icon   `json:"icons"`
 }
 
 func main() {
@@ -77,11 +77,12 @@ func main() {
         webManifest.ShortName = publication.Metadata.Title
 
 	cover, _ := publication.GetCover()
-        webManifest.Icons = Icon{
+        var icon = Icon{
                 Size: "144x144",
                 Src: cover.Href,
                 MediaType: cover.TypeLink,
         }
+        webManifest.Icons = append(webManifest.Icons, icon)
         webManifestJSON, _ := json.Marshal(webManifest)
         ioutil.WriteFile(outputDir + "webapp.webmanifest", webManifestJSON, 0644)
 }
