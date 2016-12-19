@@ -48,6 +48,19 @@ func main() {
         _ = os.Mkdir(outputDir, os.ModePerm)
 
 	publication, _ := parser.Parse(*filenameFlag, *urlFlag)
+
+        _, err := publication.GetNavDoc()
+        // Temporarily fill in HTML TOC the parser doesn't handle, until
+        // the viewer can do something with publication.TOC.
+        if err != nil {
+                for i, link := range publication.Spine {
+                        if link.Href == "toc-display.xhtml" {
+                                publication.Spine[i].Rel = append(link.Rel, "contents")
+                        }
+                }
+        }
+
+
         manifestJSON, _ := json.Marshal(publication)
         ioutil.WriteFile(outputDir + "/manifest.json", manifestJSON, 0644)
 
