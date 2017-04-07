@@ -9,8 +9,8 @@ import (
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/feedbooks/webpub-streamer/parser"
-        "github.com/feedbooks/webpub-streamer/fetcher"
+	"github.com/readium/r2-streamer-go/parser"
+        "github.com/readium/r2-streamer-go/fetcher"
 )
 
 var (
@@ -47,7 +47,7 @@ func main() {
 
         _ = os.Mkdir(outputDir, os.ModePerm)
 
-	publication, _ := parser.Parse(*filenameFlag, *urlFlag)
+	publication, _ := parser.Parse(*filenameFlag)
 
         _, err := publication.GetNavDoc()
         // Temporarily fill in HTML TOC the parser doesn't handle, until
@@ -75,7 +75,7 @@ func main() {
                 var parts = strings.Split(outputFile, "/")
                 var outputFileDir = strings.Join(parts[:len(parts)-1], "/")
                 _ = os.Mkdir(outputFileDir, os.ModePerm)
-                fileReader, _, _ := fetcher.Fetch(publication, link.Href)
+                fileReader, _, _ := fetcher.Fetch(&publication, link.Href)
                 buff, _ := ioutil.ReadAll(fileReader)
                 ioutil.WriteFile(outputFile, buff, 0644)
         }
@@ -86,8 +86,8 @@ func main() {
         var webManifest AppInstall
         webManifest.Display = "standalone"
         webManifest.StartURL = "index.html"
-        webManifest.Name = publication.Metadata.Title
-        webManifest.ShortName = publication.Metadata.Title
+        webManifest.Name = publication.Metadata.Title.String()
+        webManifest.ShortName = publication.Metadata.Title.String()
 
 	cover, _ := publication.GetCover()
         var icon = Icon{
