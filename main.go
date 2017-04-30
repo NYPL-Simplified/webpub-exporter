@@ -68,6 +68,7 @@ func main() {
         cacheManifestString += time.Now().Format("Mon Jan 2 15:04:05 -0700 MST 2006")
         cacheManifestString += "\n\n"
         cacheManifestString += "index.html\n"
+        cacheManifestString += "manifest.json\n"
 
         for _, link := range append(publication.Spine, publication.Resources...) {
                 cacheManifestString += link.Href + "\n"
